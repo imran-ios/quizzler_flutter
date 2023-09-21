@@ -25,21 +25,48 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> scoreKeeper = [];
+
+  List<String> questions = [
+    "Sharks are mammals.",
+    "Sea otters have a favorite rock they use to break open food.",
+    "The blue whale is the biggest animal to have ever lived.",
+    "The hummingbird egg is the world's smallest bird egg.",
+    "Pigs roll in the mud because they don't like being clean.",
+    "Bats are blind.",
+    "A dog sweats by panting its tongue.",
+    "It takes a sloth two weeks to digest a meal.",
+    "The largest living frog is the Goliath frog of West Africa.",
+    "An ant can lift 1,000 times its body weight.",
+    "When exiting a cave, bats always go in the direction of the wind.",
+    "Galapagos tortoises sleep up to 16 hours a day.",
+    "An octopus has seven hearts.",
+    "The goat is the national animal of Scotland.",
+    "Herbivores are animal eaters.",
+    "A monkey was the first non-human to go into space."
+  ];
+  int index = 0;
+  void updateQuestionIndex() {
+    if (index < questions.length) {
+      index++;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const Expanded(
+        Expanded(
           flex: 5,
           child: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                questions.elementAt(index),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 25.0,
                   color: Colors.white,
                 ),
@@ -68,6 +95,15 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
+                setState(() {
+                  scoreKeeper.add(
+                    const Icon(
+                      Icons.check,
+                      color: Colors.green,
+                    ),
+                  );
+                  updateQuestionIndex();
+                });
               },
             ),
           ),
@@ -92,12 +128,25 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked false.
+                setState(() {
+                  scoreKeeper.add(
+                    const Icon(
+                      Icons.close,
+                      color: Colors.red,
+                    ),
+                  );
+                  updateQuestionIndex();
+                });
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Row(
+            children: scoreKeeper,
+          ),
+        ),
       ],
     );
   }
