@@ -45,10 +45,13 @@ class _QuizPageState extends State<QuizPage> {
     "Herbivores are animal eaters.",
     "A monkey was the first non-human to go into space."
   ];
-  int index = 0;
+  int questionNumber = 0;
   void updateQuestionIndex() {
-    if (index < questions.length) {
-      index++;
+    if (questionNumber < questions.length - 1) {
+      questionNumber++;
+    } else {
+      questionNumber = 0;
+      scoreKeeper = [];
     }
   }
 
@@ -64,7 +67,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questions.elementAt(index),
+                questions.elementAt(questionNumber),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 25.0,
@@ -144,6 +147,7 @@ class _QuizPageState extends State<QuizPage> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: scoreKeeper,
           ),
         ),
