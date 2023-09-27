@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler_flutter/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+
+QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -6,6 +10,7 @@ class Quizzler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.grey.shade900,
         body: SafeArea(
@@ -27,32 +32,35 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  List<String> questions = [
-    "Sharks are mammals.",
-    "Sea otters have a favorite rock they use to break open food.",
-    "The blue whale is the biggest animal to have ever lived.",
-    "The hummingbird egg is the world's smallest bird egg.",
-    "Pigs roll in the mud because they don't like being clean.",
-    "Bats are blind.",
-    "A dog sweats by panting its tongue.",
-    "It takes a sloth two weeks to digest a meal.",
-    "The largest living frog is the Goliath frog of West Africa.",
-    "An ant can lift 1,000 times its body weight.",
-    "When exiting a cave, bats always go in the direction of the wind.",
-    "Galapagos tortoises sleep up to 16 hours a day.",
-    "An octopus has seven hearts.",
-    "The goat is the national animal of Scotland.",
-    "Herbivores are animal eaters.",
-    "A monkey was the first non-human to go into space."
-  ];
-  int questionNumber = 0;
-  void updateQuestionIndex() {
-    if (questionNumber < questions.length - 1) {
-      questionNumber++;
-    } else {
-      questionNumber = 0;
-      scoreKeeper = [];
-    }
+  void checkAnswer(bool userPickedAnswer) {
+    setState(() {
+      if (quizBrain.isFinished()) {
+        Alert(
+          context: context,
+          title: "Finished!",
+          desc: "You have reached the end of quiz ",
+        ).show();
+        quizBrain.resetQuiz();
+        scoreKeeper = [];
+      } else {
+        if (userPickedAnswer == quizBrain.getCorrectAnswer()) {
+          scoreKeeper.add(
+            const Icon(
+              Icons.check,
+              color: Colors.green,
+            ),
+          );
+        } else {
+          scoreKeeper.add(
+            const Icon(
+              Icons.close,
+              color: Colors.red,
+            ),
+          );
+        }
+        quizBrain.nextQuestion();
+      }
+    });
   }
 
   @override
@@ -67,7 +75,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questions.elementAt(questionNumber),
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 25.0,
@@ -90,23 +98,14 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               child: const Text(
-                'True',
+                "True",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
                 ),
               ),
               onPressed: () {
-                //The user picked true.
-                setState(() {
-                  scoreKeeper.add(
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  );
-                  updateQuestionIndex();
-                });
+                checkAnswer(true);
               },
             ),
           ),
@@ -124,22 +123,14 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               child: const Text(
-                'False',
+                "False",
                 style: TextStyle(
                   fontSize: 20.0,
                   color: Colors.white,
                 ),
               ),
               onPressed: () {
-                setState(() {
-                  scoreKeeper.add(
-                    const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-                  );
-                  updateQuestionIndex();
-                });
+                checkAnswer(false);
               },
             ),
           ),
@@ -155,9 +146,3 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 }
-
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
